@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from datetime import timedelta
 import os
 from pathlib import Path
+from decouple import config, Csv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-_8je4cj)562bo++py6@%7bhz-lmv)a@hdldx2+xth^pq@o*c=="
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default="django-insecure-_8je4cj)562bo++py6@%7bhz-lmv)a@hdldx2+xth^pq@o*c==",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "e5c3-197-156-107-221.ngrok-free.app"]
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
 
 # Application definition
@@ -51,6 +56,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -66,10 +72,11 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS", default="http://localhost:5173", cast=Csv()
+)
+
 
 TEMPLATES = [
     {
@@ -136,6 +143,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -164,17 +172,13 @@ SIMPLE_JWT = {
 }
 
 
-PAYPAL_CLIENT_ID = (
-    "Ad9UdnPdUhk5OoQHrJSbMiLzZRPu6wU9xTfftqgxmIBGVQHsCoXv5UdN03j6bRdaFUyEO34KkEdjueHW"
-)
-PAYPAL_CLIENT_SECRET = (
-    "EOyaWTJZ29JVE0sMIAEmHI4FyA_eSIH3-MgzVcIpN9d6o9BkMuwLVrnnNrzXyZ5RWBGhrBBYI9bQ2aFz"
-)
-PAYPAL_WEBHOOK_ID = "32N90077R6105205P"
+PAYPAL_CLIENT_ID = config("PAYPAL_CLIENT_ID")
+PAYPAL_CLIENT_SECRET = config("PAYPAL_CLIENT_SECRET")
+PAYPAL_WEBHOOK_ID = config("PAYPAL_WEBHOOK_ID")
+
+STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY")
+STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET")
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 
 
-STRIPE_PUBLIC_KEY = "pk_test_51O2xlGKME7ml0LCB5bcoGt6FToU56EVnpBK6LJ8GwCHDFV3Q5QuS3zDj6iFpBk4qD2h1P0bgbEV7k5jj6VIz3akl00Qn8pq6mm"
-STRIPE_SECRET_KEY = "sk_test_51O2xlGKME7ml0LCBIBFMy1Ku7oAk9Vcvc46O4T1ALNhURg1K5zXCjO1RVQ64RIqmnLdETdhtowoujpcCXy8v7W3i00ruA4pOrt"
-STRIPE_WEBHOOK_SECRET = "whsec_tE35oqGUEWCdbhRIMWJmeVpatjNBF1cM"
-
-SITE_URL = "http://localhost:5173/order/"
+SITE_URL = config("SITE_URL", default="http://localhost:5173/order/")

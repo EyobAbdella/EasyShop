@@ -14,6 +14,8 @@ django-filter = "*"
 django-cors-headers = "*"
 django-autoslug = "*"
 stripe = "*"
+python-decouple = "*"
+whitenoise = "*"
 
 [dev-packages]
 
