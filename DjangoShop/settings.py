@@ -32,7 +32,7 @@ SECRET_KEY = config(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=True, cast=bool)
+
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
@@ -153,6 +153,8 @@ DJANGO_ENV = config("DJANGO_ENV", default="development")
 
 
 if DJANGO_ENV == "production":
+    DEBUG = False
+
     STATICFILES_STORAGE = "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
 
     CLOUD_NAME = config("CLOUD_NAME")
@@ -168,7 +170,10 @@ if DJANGO_ENV == "production":
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 else:
+    DEBUG = True
+
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
